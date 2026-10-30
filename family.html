@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Family &amp; Friends — Elder Trey Fowers</title>
+<meta name="description" content="Updates and pictures from Elder Trey Fowers' family, friends and the Homies, saved so he can see what everyone was up to while he was gone.">
+<meta name="theme-color" content="#f8f3ea">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>document.documentElement.className+=" js-motion";setTimeout(function(){if(!window.MOTION)document.documentElement.classList.remove("js-motion");},2500);</script>
+
+</head>
+<body>
+
+<header data-site-header></header>
+
+<section class="section section--tight">
+  <div class="wrap">
+    <p class="eyebrow">From everyone back home</p>
+    <h1>Family &amp; Friends</h1>
+    <p class="lede" style="max-width:60ch">
+      Updates and pictures from the people who love him, so Trey can see what everyone was up to
+      while he was gone, and keep it all for when he gets home.
+    </p>
+    <div class="toolbar" style="margin-top:26px">
+      <a class="btn" data-share target="_blank" rel="noopener">Share an update</a>
+      <a class="btn btn--ghost btn--sm" href="#family">Family &amp; friends <span data-n="family"></span></a>
+      <a class="btn btn--ghost btn--sm" href="#homies">The Homies <span data-n="homies"></span></a>
+    </div>
+    <p class="muted" style="margin:14px 0 0;font-size:.9rem;max-width:60ch">
+      Everything is checked before it goes up. One of the Homies? Tick
+      <strong>I'm one of the Homies</strong> on the form and it goes in the Homies section.
+    </p>
+  </div>
+</section>
+
+<section class="section" id="family" style="padding-top:20px">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Notes from home</p>
+        <h2>Family &amp; friends</h2>
+      </div>
+    </div>
+    <div data-group="family"></div>
+  </div>
+</section>
+
+<section class="section section--alt" id="homies">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">His crew from back home</p>
+        <h2>The Homies</h2>
+      </div>
+    </div>
+    <div data-group="homies"></div>
+  </div>
+</section>
+
+<footer data-site-footer></footer>
+
+<script src="data/mission.js"></script>
+<script src="data/letters.js"></script>
+<script src="data/photos.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var esc = MW.esc;
+
+  var share = document.querySelector("[data-share]");
+  if (MW.M.links.friendsPost) share.href = MW.M.links.friendsPost;
+  else share.remove();
+
+  // Their own posts, plus any note they added to one of his letters.
+  var items = MW.ENTRIES.filter(function (l) { return l.kind === "family"; })
+    .map(function (l) { return { date: l.date, post: l, homie: MW.isHomiePost(l) }; });
+  MW.LETTERS.forEach(function (l) {
+    l.body.forEach(function (b) {
+      if (b.type === "family") items.push({ date: l.date, note: b, letter: l, homie: MW.isHomie(b) });
+    });
+  });
+  items.sort(function (a, b) { return b.date.localeCompare(a.date); });
+
+  // Shared photos not already shown with a post above.
+  var postIds = items.filter(function (it) { return it.post; }).map(function (it) { return it.post.id; });
+  var pics = MW.PHOTOS.filter(function (p) { return p.sharedBy && postIds.indexOf(p.letterId) === -1; });
+
+  function itemHtml(it, key) {
+    if (it.post) {
+      var l = it.post;
+      return '<article class="letter-full reveal" id="' + esc(l.id) + '">' +
+        MW.letterMeta(l) +
+        '<h3 style="font-size:clamp(1.4rem,3vw,1.8rem)">' + esc(l.title) + '</h3>' +
+        '<div class="letter-full__body">' + MW.letterBodyHtml(l) + '</div>' +
+        (MW.photosFor(l.id).length ? '<div class="photo-grid" data-post-pics="' + key + '"></div>' : '') +
+        '</article>';
+    }
+    return '<article class="letter-full reveal">' +
+      '<div class="letter-card__meta"><span class="pill pill--family">' +
+        (it.homie ? 'From the Homies' : 'From family &amp; friends') + '</span>' +
+        '<span>' + MW.fmtDate(it.date) + '</span></div>' +
+      '<div class="letter-full__body">' + MW.familyBlockHtml(it.note) + '</div>' +
+      '<p style="margin:0;font-size:.92rem">Added to his letter ' +
+        '<a href="letters.html#' + esc(it.letter.id) + '">&ldquo;' + esc(it.letter.title) + '&rdquo;</a></p>' +
+      '</article>';
+  }
+
+  function renderGroup(name, homie, empty) {
+    var host = document.querySelector('[data-group="' + name + '"]');
+    var mine = items.filter(function (it) { return it.homie === homie; });
+    var myPics = pics.filter(function (p) { return MW.isHomie(p.sharedBy) === homie; });
+    document.querySelector('[data-n="' + name + '"]').textContent = mine.length ? "(" + mine.length + ")" : "";
+
+    if (!mine.length && !myPics.length) {
+      host.innerHTML = '<p class="muted">' + empty + '</p>';
+      return;
+    }
+    host.innerHTML = mine.map(function (it, i) { return itemHtml(it, name + i); }).join("") +
+      (myPics.length
+        ? '<h3 style="margin-top:' + (mine.length ? '2em' : '0') + ';font-size:1.05rem;letter-spacing:.02em">More pictures</h3>' +
+          '<div class="photo-grid" data-more-pics></div>'
+        : '');
+    mine.forEach(function (it, i) {
+      var grid = host.querySelector('[data-post-pics="' + name + i + '"]');
+      if (grid) MW.renderPhotoGrid(grid, MW.photosFor(it.post.id));
+    });
+    if (myPics.length) MW.renderPhotoGrid(host.querySelector("[data-more-pics]"), myPics);
+  }
+
+  renderGroup("family", false, "Nothing here yet. Be the first to tell him what's new at home.");
+  renderGroup("homies", true, "Nothing from the Homies yet. Whoever posts first gets bragging rights.");
+});
+</script>
+<script src="assets/js/motion.js"></script>
+</body>
+</html>

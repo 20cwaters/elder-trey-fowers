@@ -1,0 +1,38 @@
+# Original photo files and the Gmail zips. The renamed, in-use copies live in
+# photos/ and ARE tracked — these are just the untouched originals, and they
+# would double the size of the repo for no benefit.
+photos/_inbox/_filed/
+photos/_inbox/unzipped/
+photos/_inbox/*.zip
+
+# Timestamped copies the automation makes before it edits the data files
+data/.backup/
+
+# Tooling
+node_modules/
+
+# Windows / macOS clutter
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# /brag video output. The weekly automation runs `git add -A`, so without this
+# it would sweep 6 MB of render artifacts into the public repo on Wednesday.
+# Delete this line if you want the video versioned.
+brag-output/
+brag-ad/
+brag-ad-v2/
+
+# Raw emails saved by Mission Control. They contain private addresses and must
+# never be committed — the weekly run uses `git add -A`.
+automation/incoming/
+
+# Photos waiting in the inbox are unoptimised originals (possibly with GPS).
+# Filed copies live in photos/; anything the playbook couldn't match stays out
+# of the public repo instead of being swept in by `git add -A`.
+photos/_inbox/*
+!photos/_inbox/README.txt
+
+# Mission Control's notes for Claude Code sessions in this folder (local only)
+CLAUDE.md
+SETUP-REPORT.md
