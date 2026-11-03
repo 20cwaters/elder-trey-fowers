@@ -100,6 +100,7 @@
     { href: "thoughts.html", label: "Spiritual Thoughts" },
     { href: "photos.html", label: "Photos" },
     { href: "map.html", label: "Where He Is" },
+    { href: "mission.html", label: "The Mission" },
     { href: "family.html", label: "Family & Friends" },
     { href: "about.html", label: "About & Write Him" }
   ];
