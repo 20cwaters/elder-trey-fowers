@@ -32,7 +32,9 @@
         (p.photo ? '<div class="president__photo"><img src="' + esc(p.photo) + '" alt="' + esc(p.names) + '"></div>' : '') +
         '<div class="president__text">' +
           '<h3>' + esc(p.names) + '</h3>' +
-          (p.since ? '<p class="president__since">Leading the ' + esc(missionName) + ' since ' + esc(monthYear(p.since)) + '</p>' : '') +
+          // `until`: a couple who has since been released (a finished mission shows the one who led most of it).
+          (p.since && p.until ? '<p class="president__since">Led the ' + esc(missionName) + ' from ' + esc(monthYear(p.since)) + ' to ' + esc(monthYear(p.until)) + '</p>'
+            : p.since ? '<p class="president__since">Leading the ' + esc(missionName) + ' since ' + esc(monthYear(p.since)) + '</p>' : '') +
           [].concat(p.bio).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join("") +
           (p.source && p.source.url
             ? '<p class="president__source">From their introduction in <a href="' + esc(p.source.url) +
